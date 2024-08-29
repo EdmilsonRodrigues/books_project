@@ -1,13 +1,20 @@
 from aiosqlite import connect
 
+count = 0
+
 
 def get_connection():
-    return connect("books.db")
+    return connect("db.sqlite3")
 
 
 async def create_table():
-    async with get_connection() as connection:
-        await connection.execute(
-            "CREATE TABLE IF NOT EXISTS books (id INTEGER PRIMARY KEY, title TEXT, author TEXT, category TEXT)"
-        )
-        await connection.commit()
+    global count
+    if count == 0:
+        count += 1
+        async with get_connection() as connection:
+            await connection.execute(
+                "CREATE TABLE IF NOT EXISTS books \
+    (id INTEGER PRIMARY KEY, title TEXT, author TEXT, category TEXT, rating INTEGER)"
+            )
+            await connection.commit()
+    return True
